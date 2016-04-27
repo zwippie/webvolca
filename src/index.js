@@ -4,8 +4,19 @@ import ReactDOM from 'react-dom'
 
 import Rack from './Rack'
 
-console.log('hello')
+// First, let's shim the requestAnimationFrame API, with a setTimeout fallback
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame ||
+  window.webkitRequestAnimationFrame ||
+  window.mozRequestAnimationFrame ||
+  window.oRequestAnimationFrame ||
+  window.msRequestAnimationFrame ||
+  function( callback ){
+      window.setTimeout(callback, 1000 / 60);
+  };
+})();
 
+// Test for WebMidi support
 WebMidi.enable(onSuccess, onFailure)
 
 function onSuccess() {
