@@ -26,7 +26,7 @@ class Keyboard extends Component {
 
     console.log("keyboard stopNote " + note)
     if (holdNote != note) {
-      stopNote()
+      stopNote(note)
     }
   }
 

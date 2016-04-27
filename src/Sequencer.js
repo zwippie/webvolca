@@ -13,7 +13,7 @@ class Sequencer extends Component {
 
   scheduleEvents(beatNumber, time) {
     const { sequence, length, gateTime } = this.state
-    const { webMidi, midiDevice, midiChannel } = this.props
+    const { playNote, stopNote } = this.props
 
     let secondsPerBeat = 60.0 / this.props.tempo;  // picks up the CURRENT tempo value!
     let duration = secondsPerBeat * 1000 / 4 * gateTime; // Add 1/4 of quarter-note beat length to time
@@ -21,9 +21,9 @@ class Sequencer extends Component {
 
     if (note) {
       // play and stop note on the connected device
-      webMidi.playNote(note, 1.0, undefined, midiDevice, midiChannel, time)
-      webMidi.stopNote(note, 0.5, midiDevice, midiChannel, time + duration)
       console.log(beatNumber, 'SEQ BASS NOTE', note, 'scheduled from ', time, 'to', time + duration)
+      playNote(note, 1.0, undefined, time)
+      stopNote(note, time + duration)
     } else {
       console.log(beatNumber, 'SEQ BASS NO EVENTS')
     }
