@@ -1,0 +1,29 @@
+#master-controls {
+
+}
+
+#master-controls input {
+  width: 3em;
+}
+
+#keyboard {
+  list-style-type: none;
+  font-size: 2em;
+}
+
+#keyboard li {
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  margin-right: 10px;
+  width: 1em;
+}
+
+#keyboard li.hold {
+  background-color: black;
+  color: white;
+}
+
+#keyboard li input {
+  width: 2em;
+}
