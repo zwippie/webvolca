@@ -21,10 +21,9 @@ class VolcaBass extends Component {
   playNote(note, velocity = 1.0, length = undefined) {
     const { midiDevice, midiChannel, notePlaying, notePlayingLength } = this.state
     const { webMidi } = this.props
-    console.log("VolcaBass Play Note:", note, velocity, length)
+    console.log("Bass Play Note:", note, velocity, length)
     
     // Play midi notes with undefined length, the volca bass likes that
-    console.log('playNote', note, length)
     webMidi.playNote(note, velocity, undefined, midiDevice, midiChannel)
     if (length !== undefined) {
       webMidi.stopNote(note, 0.5, midiDevice, midiChannel)
@@ -52,7 +51,7 @@ class VolcaBass extends Component {
       note = notePlaying
     }
 
-    console.log('stop note', note)
+    console.log('Bass stop note', note)
     if (note) {
       webMidi.stopNote(note, 0.5, midiDevice, midiChannel)
       this.setState({
@@ -115,9 +114,6 @@ class VolcaBass extends Component {
           </label>
         </div>
         <Keyboard ref="keyboard"
-          webMidi={webMidi}
-          midiDevice={midiDevice}
-          midiChannel={midiChannel}
           playNote={(...args) => this.playNote(...args)}
           stopNote={(...args) => this.stopNote(...args)} />
         <Sequencer ref="sequencer" 

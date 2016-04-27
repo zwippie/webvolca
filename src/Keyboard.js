@@ -11,43 +11,41 @@ class Keyboard extends Component {
   }
 
   playNote(note) {
-    const { webMidi, playNote } = this.props
+    const { playNote } = this.props
     const { holdNote } = this.state
 
-    // console.log("playNote " + note + octave)
+    console.log("keyboard playNote " + note)
     if (holdNote != note) {
       playNote(note)
     }
-    // webMidi.playNote(note, 1)
   }
 
   stopNote(note) {
     const { webMidi, stopNote } = this.props
     const { holdNote } = this.state
 
-    // console.log("stopNote " + note + octave)
+    console.log("keyboard stopNote " + note)
     if (holdNote != note) {
-      // webMidi.stopNote(note)
       stopNote()
     }
-
   }
 
   toggleNote(note) {
-    const { webMidi } = this.props
+    const { playNote, stopNote } = this.props
     const { holdNote } = this.state
 
+    console.log("keyboard toggleNote", note)
     this.setState({
       holdNote: holdNote == note ? false : note
     })
 
     if (holdNote == note) {     // release
-      webMidi.stopNote(note)
+      stopNote(note)
     } else {
       if (holdNote) {           // release prev
-        webMidi.stopNote(holdNote)
+        stopNote(holdNote)
       }
-      webMidi.playNote(note, 1) // hold new note
+      playNote(note, 1) // hold new note
     }
   }
 
@@ -61,8 +59,8 @@ class Keyboard extends Component {
   }
 
   render() {
-    const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
     const { octave, holdNote } = this.state
+    const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
     return (
       <ul id="keyboard">
@@ -76,8 +74,7 @@ class Keyboard extends Component {
               })}
               key={note}
               onMouseUp={() => this.toggleNote(note + octave)}
-              // onMouseUp={() => this.props.stopNote()}
-              onMouseEnter={() => this.props.playNote(note + octave, 0.9)}
+              onMouseEnter={() => this.playNote(note + octave, 0.9)}
               onMouseOut={() => this.stopNote(note + octave)}>
               {note}
           </li>
