@@ -21,7 +21,7 @@ class Keyboard extends Component {
   }
 
   stopNote(note) {
-    const { webMidi, stopNote } = this.props
+    const { stopNote } = this.props
     const { holdNote } = this.state
 
     console.log("keyboard stopNote " + note)
@@ -65,11 +65,15 @@ class Keyboard extends Component {
     return (
       <ul id="keyboard">
         <li>
-          <input type="number" step="1" min="0" max="6" value={octave} 
-                 onChange={(event) => this.changeOctave(event)} />
+          <label>
+            Octave
+            <input type="number" step="1" min="0" max="6" value={octave} 
+                  onChange={(event) => this.changeOctave(event)} />
+          </label>
         </li>
         {notes.map(note =>
           <li className={classnames({
+                note: true,
                 hold: note + octave == holdNote
               })}
               key={note}

@@ -8,7 +8,6 @@
 
 #keyboard {
   list-style-type: none;
-  font-size: 2em;
 }
 
 #keyboard li {
@@ -16,6 +15,10 @@
   *display: inline;
   zoom: 1;
   margin-right: 10px;
+}
+
+#keyboard li.note {
+  font-size: 2em;
   width: 1em;
 }
 

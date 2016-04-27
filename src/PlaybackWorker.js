@@ -1,3 +1,5 @@
+/* Background webworker for a steady timer to provide ticks
+  to schedule musical events. See Rack component. */
 var timerID = null
 var interval = 100
 

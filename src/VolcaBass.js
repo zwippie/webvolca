@@ -56,6 +56,7 @@ class VolcaBass extends Component {
     }
   }
 
+  /* TODO: Ask 'all' input devices (or only the sequencer) for this bass device for input */
   scheduleEvents(beatNumber, time) {
     const { midiDevice, midiChannel } = this.state
 

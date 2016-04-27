@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react'
 
 import VolcaBass from './VolcaBass'
 import PlaybackWorker from 'worker!./PlaybackWorker'
-// let PlaybackWorker = require('worker!./PlaybackWorker')
 
 class Rack extends Component {
   constructor(props, context) {
@@ -13,26 +12,26 @@ class Rack extends Component {
       tempo: 120.0,
       devices: [{type: 'VolcaBass'}],
       startTime: 0.0,
-      // current16thNote: 0,
-      // nextNoteTime: 0.0,
       lookahead: 25.0,
       scheduleAheadTime: 100.0
     }
+    // Don't keep this in state or props, user has no direct control
     this.current16thNote = 0.0
     this.nextNoteTime = 0.0
-    // this.lookahead = 25.0
-    // this.scheduleAheadTime = 100.0
+
+    // The worker that will provide steady ticks when to schedule events 
     this.createPlaypackWorker()
   }
 
+  changeTempo(bpm) {
+    this.setState({
+      tempo: bpm
+    })
+  }
+
+  /* PLAYBACK CONTROL / TIMING / EVENTS */
+
   createPlaypackWorker() {
-    // if (this.playbackWorker) {
-    //   this.playbackWorker.postMessage({'cmd': 'stop', 'msg': 'Bye'})
-    // }
-    // this.playbackWorker = new PlaybackWorker()
-    // this.playbackWorker.addEventListener('message', function(e) {
-    //   console.log(e.data)
-    // }, false)
     const { lookahead } = this.state
 
     this.playbackWorker = new PlaybackWorker();
@@ -48,6 +47,7 @@ class Rack extends Component {
     this.playbackWorker.postMessage({"interval": lookahead})
   }
 
+  // Start playback for the whole rack, use webworker to trigger scheduler pulses
   play() {
     const { webMidi } = this.props
     
@@ -59,6 +59,7 @@ class Rack extends Component {
     })
   }
 
+  // Stop playback for the whole rack
   stop() {
     this.playbackWorker.postMessage("stop");
     this.setState({
@@ -66,20 +67,14 @@ class Rack extends Component {
     })
   }
 
-  changeTempo(bpm) {
-    this.setState({
-      tempo: bpm
-    })
-  }
-
   scheduler() {
-    // const { nextNoteTime, current16thNote, scheduleAheadTime } = this.state
+    const { scheduleAheadTime } = this.state
     const { webMidi } = this.props
     // console.log('scheduler called', webMidi.time, this.nextNoteTime, this.current16thNote)
 
     // while there are notes that will need to play before the next interval, 
     // schedule them and advance the pointer.
-    while (this.nextNoteTime < webMidi.time + this.state.scheduleAheadTime ) {
+    while (this.nextNoteTime < webMidi.time + scheduleAheadTime ) {
       // console.log('scheduler while', webMidi.time, this.nextNoteTime, this.current16thNote)
       this.scheduleEvents(this.current16thNote, this.nextNoteTime);
       this.nextNote();
@@ -88,17 +83,12 @@ class Rack extends Component {
 
   scheduleEvents(beatNumber, time) {
     const { devices, tempo } = this.state
-    const { webMidi, scheduleAheadTime } = this.props
-    // console.log('scheduleNote called', beatNumber, time, webMidi.time)
-
     const bass = this.refs['bass']
-    // console.log(bass)
+    
     let secondsPerBeat = 60.0 / tempo;  // picks up the CURRENT tempo value!
     let duration = secondsPerBeat * 1000 / 4; // Add 1/4 of quarter-note beat length to time
 
-    // webMidi.playNote('C3', 1.0, undefined, undefined, 'all', time)
-    // webMidi.stopNote('C3', 0.5, undefined, 'all', time + duration)
-    // console.log(beatNumber, 'NOTE scheduled from ', time, 'to', time + duration)
+    // TODO: Ask all instruments/devices in rack to schedule events
     this.refs['bass'].scheduleEvents(beatNumber, time)
   }
 
@@ -112,9 +102,7 @@ class Rack extends Component {
     this.current16thNote = (this.current16thNote + 1) % 16  // Advance the beat number, wrap to zero
   }
 
-  // componentWillUpdate(nextProps, nextState) {
-  //   console.log(nextProps, nextState)
-  // }
+  /* RENDERING */
 
   render() {
     const { playing, tempo, devices } = this.state
@@ -123,8 +111,11 @@ class Rack extends Component {
     return (
       <div>
         <div id="master-controls">
-          <input type="number" value={tempo}
-            onChange={(event) => this.changeTempo(event.target.value)} />
+          <label>
+            BPM
+            <input type="number" value={tempo}
+              onChange={(event) => this.changeTempo(event.target.value)} />
+          </label>
           <button disabled={playing}
             onClick={() => this.play()}>
             Play</button>
