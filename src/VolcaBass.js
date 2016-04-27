@@ -19,7 +19,7 @@ class VolcaBass extends Component {
     const { webMidi } = this.props
     console.log("VolcaBass Play Note:", note, velocity, length)
     
-    webMidi.playNote(note, velocity, length)
+    webMidi.playNote(note, velocity, length, midiDevice, midiChannel)
     if (notePlaying && notePlaying != note) {
       webMidi.stopNote(notePlaying, 0.5, midiDevice, midiChannel)
     }
@@ -33,7 +33,7 @@ class VolcaBass extends Component {
     const { webMidi } = this.props
 
     if (notePlaying) {
-      webMidi.stopNote(notePlaying, 0.5)
+      webMidi.stopNote(notePlaying, 0.5, midiDevice, midiChannel)
       this.setState({
         notePlaying: false
       })
@@ -94,6 +94,7 @@ class VolcaBass extends Component {
         </div>
         <Keyboard ref="keyboard"
           webMidi={webMidi}
+          midiDevice={midiDevice}
           midiChannel={midiChannel}
           playNote={(...args) => this.playNote(...args)}
           stopNote={() => this.stopNote()} />

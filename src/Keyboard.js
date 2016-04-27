@@ -11,22 +11,26 @@ class Keyboard extends Component {
   }
 
   playNote(note) {
-    const { webMidi } = this.props
+    const { webMidi, playNote } = this.props
     const { holdNote } = this.state
 
     // console.log("playNote " + note + octave)
     if (holdNote != note)
     
-    webMidi.playNote(note, 1)
+    playNote(note, 1)
+    // webMidi.playNote(note, 1)
   }
 
   stopNote(note) {
-    const { webMidi } = this.props
+    const { webMidi, stopNote } = this.props
     const { holdNote } = this.state
 
     // console.log("stopNote " + note + octave)
-    if (holdNote != note)
-      webMidi.stopNote(note)
+    if (holdNote != note) {
+      // webMidi.stopNote(note)
+      stopNote()
+    }
+
   }
 
   toggleNote(note) {
@@ -71,11 +75,11 @@ class Keyboard extends Component {
                 hold: note + octave == holdNote
               })}
               key={note}
-              // onMouseUp={() => this.toggleNote(note + octave)}
-              onMouseUp={() => this.props.stopNote()}
+              onMouseUp={() => this.toggleNote(note + octave)}
+              // onMouseUp={() => this.props.stopNote()}
               onMouseEnter={() => this.props.playNote(note + octave, 0.9)}
-              // onMouseOut={() => this.stopNote(note + octave)}>
-              >{note}
+              onMouseOut={() => this.stopNote(note + octave)}>
+              {note}
           </li>
         )}
       </ul>

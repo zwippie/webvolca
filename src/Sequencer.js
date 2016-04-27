@@ -6,16 +6,17 @@ class Sequencer extends Component {
     super(props, context)
     this.state = {
       length: 8,
-      sequence: ["C2", "C2", "C3", "C3", false, "C2", "C3", "C3"]
+      sequence: ["C2", "C2", "C3", "C3", false, "C2", "C3", "C3"],
+      gateTime: 1.0
     }
   }
 
   scheduleEvents(beatNumber, time) {
-    const { sequence, length } = this.state
+    const { sequence, length, gateTime } = this.state
     const { webMidi, midiDevice, midiChannel } = this.props
 
     let secondsPerBeat = 60.0 / this.props.tempo;  // picks up the CURRENT tempo value!
-    let duration = secondsPerBeat * 1000 / 4; // Add 1/4 of quarter-note beat length to time
+    let duration = secondsPerBeat * 1000 / 4 * gateTime; // Add 1/4 of quarter-note beat length to time
     let note = sequence[beatNumber % length]
 
     if (note) {
@@ -28,13 +29,26 @@ class Sequencer extends Component {
     }
   }
 
-  onBpmCount(count) {
-
+  setGateTime(gateTime) {
+    this.setState({
+      gateTime: gateTime
+    })
   }
 
   render() {
+    const { gateTime } = this.state
+
     return (
-      <div>Seq {this.state.sequence.join(' - ')}</div>
+      <div>
+        <h2>Seq {this.state.sequence.join(' - ')}</h2>
+        <label>
+          Gate Time
+          <input type="number" step="0.1" min="0.0" max="1.0" 
+            value={gateTime}
+            onChange={(ev) => this.setGateTime(ev.target.value)}/>
+        </label>
+      </div>
+
     )
   }
 }
