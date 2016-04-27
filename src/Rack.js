@@ -75,29 +75,31 @@ class Rack extends Component {
   scheduler() {
     // const { nextNoteTime, current16thNote, scheduleAheadTime } = this.state
     const { webMidi } = this.props
-    console.log('scheduler called', webMidi.time, this.nextNoteTime, this.current16thNote)
+    // console.log('scheduler called', webMidi.time, this.nextNoteTime, this.current16thNote)
 
     // while there are notes that will need to play before the next interval, 
     // schedule them and advance the pointer.
     while (this.nextNoteTime < webMidi.time + this.state.scheduleAheadTime ) {
-      console.log('scheduler while', webMidi.time, this.nextNoteTime, this.current16thNote)
-      this.scheduleNote(this.current16thNote, this.nextNoteTime);
+      // console.log('scheduler while', webMidi.time, this.nextNoteTime, this.current16thNote)
+      this.scheduleEvents(this.current16thNote, this.nextNoteTime);
       this.nextNote();
     }
   }
 
-  scheduleNote(beatNumber, time) {
+  scheduleEvents(beatNumber, time) {
     const { devices, tempo } = this.state
     const { webMidi, scheduleAheadTime } = this.props
-    let currentNoteStartTime = webMidi.time
-    console.log('scheduleNote called', beatNumber, time, webMidi.time)
+    // console.log('scheduleNote called', beatNumber, time, webMidi.time)
 
     const bass = this.refs['bass']
     // console.log(bass)
-    let duration = 60.0 / tempo * 1000 / 8;
-    webMidi.playNote('C3', 1.0, undefined, undefined, 'all', time)
-    webMidi.stopNote('C3', 0.5, undefined, 'all', time + duration)
-    console.log(beatNumber, 'NOTE scheduled from ', time, 'to', time + duration)
+    let secondsPerBeat = 60.0 / tempo;  // picks up the CURRENT tempo value!
+    let duration = secondsPerBeat * 1000 / 4; // Add 1/4 of quarter-note beat length to time
+
+    // webMidi.playNote('C3', 1.0, undefined, undefined, 'all', time)
+    // webMidi.stopNote('C3', 0.5, undefined, 'all', time + duration)
+    // console.log(beatNumber, 'NOTE scheduled from ', time, 'to', time + duration)
+    this.refs['bass'].scheduleEvents(beatNumber, time)
   }
 
   nextNote() {
@@ -106,7 +108,7 @@ class Rack extends Component {
     // Advance current note and time by a 16th note...
     let secondsPerBeat = 60.0 / tempo;  // picks up the CURRENT tempo value!
     
-    this.nextNoteTime += (0.25 * secondsPerBeat * 1000),  // Add 1/4 of quarter-note beat length to time,
+    this.nextNoteTime += (secondsPerBeat * 1000 / 4),  // Add 1/4 of quarter-note beat length to time,
     this.current16thNote = (this.current16thNote + 1) % 16  // Advance the beat number, wrap to zero
   }
 
@@ -131,7 +133,7 @@ class Rack extends Component {
             Stop</button>
         </div>
         {devices.map(device =>
-          <VolcaBass ref="bass" key="bass" webMidi={webMidi} playing={playing} tempo={tempo} />            
+          <VolcaBass ref="bass" key="bass" webMidi={webMidi} playing={playing} tempo={tempo} />
         )}
       </div>
     )
