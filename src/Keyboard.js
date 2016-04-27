@@ -15,9 +15,9 @@ class Keyboard extends Component {
     const { holdNote } = this.state
 
     // console.log("playNote " + note + octave)
-    if (holdNote != note)
-    
-    playNote(note, 1)
+    if (holdNote != note) {
+      playNote(note)
+    }
     // webMidi.playNote(note, 1)
   }
 

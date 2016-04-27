@@ -9,33 +9,55 @@ class VolcaBass extends Component {
     super(props, context)
     this.state = {
       notePlaying: false,
+      notePlayingLength: undefined,
       midiDevice: undefined,
       midiChannel: '1'
     }
   }
 
-  playNote(note, velocity = 1, length = undefined) {
-    const { midiDevice, midiChannel, notePlaying } = this.state
+  /* Play a note. If length is given, playNote and stopNote events will be
+    added to the MIDI stream. If no length is given the note will play
+    until a stopNote is called or until a new playNote is called. */
+  playNote(note, velocity = 1.0, length = undefined) {
+    const { midiDevice, midiChannel, notePlaying, notePlayingLength } = this.state
     const { webMidi } = this.props
     console.log("VolcaBass Play Note:", note, velocity, length)
     
-    webMidi.playNote(note, velocity, length, midiDevice, midiChannel)
-    if (notePlaying && notePlaying != note) {
+    // Play midi notes with undefined length, the volca bass likes that
+    console.log('playNote', note, length)
+    webMidi.playNote(note, velocity, undefined, midiDevice, midiChannel)
+    if (length !== undefined) {
+      webMidi.stopNote(note, 0.5, midiDevice, midiChannel)
+    } else {
+      // only save notes with undefined length
+      this.setState({
+        notePlaying: note,
+        notePlayingLength: undefined
+      })
+    }
+    // Stop previous note if length was undefined
+    if (notePlaying && notePlaying != note && notePlayingLength === undefined) {
       webMidi.stopNote(notePlaying, 0.5, midiDevice, midiChannel)
     }
-    this.setState({
-      notePlaying: note
-    })
+
   }
 
-  stopNote() {
+  /* Stop the last note that was played with undefined length, or 
+    stop a specific note if argument is given. */
+  stopNote(note = undefined) {
     const { midiDevice, midiChannel, notePlaying } = this.state
     const { webMidi } = this.props
 
-    if (notePlaying) {
-      webMidi.stopNote(notePlaying, 0.5, midiDevice, midiChannel)
+    if (note === undefined) {
+      note = notePlaying
+    }
+
+    console.log('stop note', note)
+    if (note) {
+      webMidi.stopNote(note, 0.5, midiDevice, midiChannel)
       this.setState({
-        notePlaying: false
+        notePlaying: false,
+        notePlayingLength: undefined
       })
     }
   }
@@ -67,7 +89,7 @@ class VolcaBass extends Component {
     const devices = [{ id: undefined, name: 'All' }].concat(
       webMidi.outputs.map(device => ({ id: device.id, name: device.name }))
     )
-    console.log("Devices:", devices, 'selected:', midiDevice)
+    // console.log("Devices:", devices, 'selected:', midiDevice)
 
     return (
       <div>
@@ -97,7 +119,7 @@ class VolcaBass extends Component {
           midiDevice={midiDevice}
           midiChannel={midiChannel}
           playNote={(...args) => this.playNote(...args)}
-          stopNote={() => this.stopNote()} />
+          stopNote={(...args) => this.stopNote(...args)} />
         <Sequencer ref="sequencer" 
           webMidi={webMidi}
           midiDevice={midiDevice}
