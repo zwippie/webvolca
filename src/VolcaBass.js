@@ -79,6 +79,11 @@ class VolcaBass extends Component {
     })
   }
 
+  onKnobChange(val) {
+    val = val.toFixed(0)
+    console.log('onKnobChange', val)
+  }
+
   render() {
     const { midiDevice, midiChannel } = this.state
     const { webMidi, playing, tempo } = this.props
@@ -119,6 +124,7 @@ class VolcaBass extends Component {
               tooltip="Knob1 tooltip"></webaudio-knob>
           <WebAudioKnob
               src="images/LittlePhatty.png" sprites={100}
+              onChange={(val) => this.onKnobChange(val)}
               defvalue={64} max={127} step={1} diameter={64} tooltip="React Knob!" />
         </div>
         <Keyboard ref="keyboard"

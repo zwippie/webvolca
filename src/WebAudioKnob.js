@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 
+
+
 class WebAudioKnob extends Component {
   constructor(props, context) {
     super(props, context)
@@ -22,28 +24,51 @@ class WebAudioKnob extends Component {
     this.ctlStep = 1
     this.ttflag = 0
     this.vtflag = 0
+    this.press = 0
   }
 
   log2(num) {
     return Math.log(num) / Math.LN2
   }
 
-  pointermove(e) {
+  pointerdown(e) {
     const { value } = this.state
-    const { min, max, sensitivity } = this.props
+    const { enable, defvalue } = this.props
 
-    if (e.touches)
-      e = e.touches[0]
-    if (this.lastShift !== e.shiftKey) {
-      this.lastShift = e.shiftKey
-      this.startPosX = e.pageX
-      this.startPosY = e.pageY
-      this.startVal = value
+    console.log('pointerdown')
+    if (!enable) return;
+    console.log('pointerdown Go')
+    if (e.touches) e = e.touches[0];
+    this.boundPointermove = WebAudioKnob.pointermove.bind(this);
+    this.boundCancel = WebAudioKnob.cancel.bind(this);
+    if(e.ctrlKey || e.metaKey) {
+      this.setValue(parseFloat(defvalue))
+    } else {
+      this.startPosX = e.pageX;
+      this.startPosY = e.pageY;
+      this.startVal = value;
+      window.addEventListener('mousemove', this.boundPointermove, true);
+      window.addEventListener('touchmove', this.boundPointermove, true);
     }
-    var offset = (this.startPosY - e.pageY - this.startPosX + e.pageX) * sensitivity;
-    if(this.setValue(min + ((((this.startVal + (this.max - min) * offset / ((e.shiftKey ? 4:1) * 128)) - min) / this.ctlStep)|0) * this.ctlStep))
-      this.fire('change');
+    window.addEventListener('mouseup', this.boundCancel, true);
+    window.addEventListener('touchend', this.boundCancel, true);
+    window.addEventListener('touchcancel', this.boundCancel, true);
+    this.press = this.vtflag = 1;
+    this.ttflag = 0;
+    // this.showtip();
     e.preventDefault();
+  }
+
+  pointerover(e) {
+    let btn = (typeof(e.buttons) !== "undefined") ? e.buttons : e.which
+    if (btn==0) this.ttflag = 1
+    // setTimeout(this.showtip.bind(this),700);
+  }
+
+  pointerout(e) {
+    this.ttflag = 0;
+    if (this.press == 0) this.vtflag = 0;
+    // this.showtip();
   }
 
   wheel(e) {
@@ -81,11 +106,12 @@ class WebAudioKnob extends Component {
       this.width = diameter;
     if (this.height === null)
       this.height = diameter
+
     let knb = this.refs['wac-knob'];
     knb.addEventListener('DOMMouseScroll',this.wheel.bind(this),false);
     knb.addEventListener('mousewheel',this.wheel.bind(this),false);
-    // knb.addEventListener('mouseover',this.pointerover.bind(this),false);
-    // knb.addEventListener('mouseout',this.pointerout.bind(this),false);
+    knb.addEventListener('mouseover',this.pointerover.bind(this),false);
+    knb.addEventListener('mouseout',this.pointerout.bind(this),false);
     knb.style.width = this.width+'px';
     knb.style.height = this.height+'px';
     if(src)
@@ -104,10 +130,10 @@ class WebAudioKnob extends Component {
     if (log) {
       if (this.minval == 0)
         this.minval = 0.001;
-      this.props.min = log2(this.minval);
-      this.props.max = log2(this.maxval);
-      this.setValue(log2(value));
-      this.ctlStep = log2(step);
+      this.props.min = this.log2(this.minval);
+      this.props.max = this.log2(this.maxval);
+      this.setValue(this.log2(value));
+      this.ctlStep = this.log2(step);
       if (this.ctlStep == 0)
         this.ctlStep = 0.0001;
     } else{
@@ -119,7 +145,7 @@ class WebAudioKnob extends Component {
 
   setValue(value) {
     const { valueold } = this.state
-    const { step, min, max, log } = this.props
+    const { step, min, max, log, onChange } = this.props
     console.log('setValue', value)
 
     value = parseFloat(value);
@@ -131,6 +157,7 @@ class WebAudioKnob extends Component {
         valueold: value
       })
     }
+    onChange(value) // fire change
     return value != valueold ? 1 : 0
   }
 
@@ -167,7 +194,9 @@ class WebAudioKnob extends Component {
     console.log('render value', value, 'valuedisp', valuedisp, 'valueNumber', valueNumber)
 
     return (
-      <div className="wac-container">
+      <div className="wac-container" ref="wac-container"
+        onMouseDown={(ev) => this.pointerdown(ev)}
+        onTouchStart={(ev) => this.pointerdown(ev)}>
         <div className="wac-body" touch-action="none">
           <div className="wac-knob" ref="wac-knob" touch-action="none" style={knobStyle}></div>
           <span className="wac-value-tip">{valuedisp}{units}</span>
@@ -193,11 +222,44 @@ WebAudioKnob.defaultProps = {
   diameter:   64,
   step:       1,
   sprites:    0,
-  enable:   1,
+  enable:     true,
   src:    null,
   sensitivity:1,
-  valuetip:   1,
-  press:    0
+  valuetip:   1
 }
+
+WebAudioKnob.pointermove = function(e) {
+  const { value } = this.state
+  const { min, max, sensitivity } = this.props
+
+  if(e.touches)
+    e = e.touches[0];
+  if(this.lastShift !== e.shiftKey) {
+    this.lastShift = e.shiftKey;
+    this.startPosX = e.pageX;
+    this.startPosY = e.pageY;
+    this.startVal = value;
+  }
+  var offset = (this.startPosY - e.pageY - this.startPosX + e.pageX) * sensitivity;
+
+  const newValue = min + ((((this.startVal + (max - min) * offset / ((e.shiftKey ? 4:1) * 128)) - min) / this.ctlStep)|0) * this.ctlStep
+  console.log(value, newValue, min, max, this.startVal, offset, this.ctlStep)
+  this.setValue(newValue)
+  // this.setValue(min + ((((this.startVal + (max - min) * offset / ((e.shiftKey ? 4:1) * 128)) - min) / this.ctlStep)|0) * this.ctlStep)
+    // this.fire('change');
+    // this.props.onChange(value)
+  e.preventDefault();
+};
+
+WebAudioKnob.cancel = function(e) {
+  this.press = this.vtflag = 0;
+  // this.showtip();
+  this.startPosX = this.startPosY = null;
+  window.removeEventListener('mousemove', this.boundPointermove, true);
+  window.removeEventListener('touchmove', this.boundPointermove, true);
+  window.removeEventListener('mouseup', this.boundCancel, true);
+  window.removeEventListener('touchend', this.boundCancel, true);
+  window.removeEventListener('touchcancel', this.boundCancel, true);
+};
 
 export default WebAudioKnob
