@@ -63,27 +63,49 @@ class Keyboard extends Component {
     const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
     return (
-      <ul id="keyboard">
-        <li>
-          <label>
-            Octave
-            <input type="number" step="1" min="0" max="6" value={octave} 
-                  onChange={(event) => this.changeOctave(event)} />
-          </label>
-        </li>
-        {notes.map(note =>
-          <li className={classnames({
-                note: true,
-                hold: note + octave == holdNote
-              })}
-              key={note}
-              onMouseUp={() => this.toggleNote(note + octave)}
-              onMouseEnter={() => this.playNote(note + octave, 0.9)}
-              onMouseOut={() => this.stopNote(note + octave)}>
-              {note}
+      <div>
+        <ul id="keyboard">
+          <li>
+            <label>
+              Octave
+              <input type="number" step="1" min="0" max="6" value={octave} 
+                    onChange={(event) => this.changeOctave(event)} />
+            </label>
           </li>
-        )}
-      </ul>
+          {notes.map(note =>
+            <li className={classnames({
+                  note: true,
+                  hold: note + octave == holdNote
+                })}
+                key={note}
+                onMouseUp={() => this.toggleNote(note + octave)}
+                onMouseEnter={() => this.playNote(note + octave, 0.9)}
+                onMouseOut={() => this.stopNote(note + octave)}>
+                {note}
+            </li>
+          )}
+        </ul>
+        <br/>
+        <div className="p-wrapper">
+          <ul className="piano">
+            <li><div className="anchor" onClick={() => console.log('C2')}></div></li>
+            <li><div className="anchor" onClick={() => console.log('D2')}></div><span onClick={() => console.log('C#2')}></span></li>
+            <li><div className="anchor"></div><span></span></li>
+            <li><div className="anchor"></div></li>
+            <li><div className="anchor"></div><span></span></li>
+            <li><div className="anchor"></div><span></span></li>
+            <li><div className="anchor"></div><span></span></li>
+            <li><div className="anchor"></div></li>
+            <li><div className="anchor"></div><span></span></li>
+            <li><div className="anchor"></div><span></span></li>
+            <li><div className="anchor"></div></li>
+            <li><div className="anchor"></div><span></span></li>
+            <li><div className="anchor"></div><span></span></li>
+            <li><div className="anchor"></div><span></span></li>
+            <li><div className="anchor"></div></li>
+          </ul>
+        </div>
+      </div>
     )
   }
 

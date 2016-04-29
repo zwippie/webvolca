@@ -3,6 +3,8 @@ import classnames from 'classnames'
 
 import Keyboard from './Keyboard'
 import Sequencer from './Sequencer'
+import Knob from './Knob'
+import WebAudioKnob from './WebAudioKnob'
 
 class VolcaBass extends Component {
   constructor(props, context) {
@@ -22,7 +24,7 @@ class VolcaBass extends Component {
     const { midiDevice, midiChannel, notePlaying, notePlayingLength } = this.state
     const { webMidi } = this.props
     console.log("Bass Play Note:", note, velocity, length, time === undefined ? webMidi.time : time)
-    
+
     // Play midi notes with undefined length, the volca bass likes that
     webMidi.playNote(note, velocity, undefined, midiDevice, midiChannel, time)
     if (length !== undefined) {
@@ -36,7 +38,7 @@ class VolcaBass extends Component {
     }
   }
 
-  /* Stop the last note that was played with undefined length, or 
+  /* Stop the last note that was played with undefined length, or
     stop a specific note if argument is given. */
   stopNote(note = undefined, time = undefined) {
     const { midiDevice, midiChannel, notePlaying } = this.state
@@ -92,7 +94,7 @@ class VolcaBass extends Component {
         <div>
           <label>
             Device
-            <select value={midiDevice ? midiDevice.id : midiDevice} 
+            <select value={midiDevice ? midiDevice.id : midiDevice}
               onChange={(ev) => this.setMidiDevice(ev.target.value)}>
               {devices.map(device =>
                 <option key={"midiDevice"+device.id} value={device.id}>{device.name}</option>
@@ -101,20 +103,30 @@ class VolcaBass extends Component {
           </label>
           <label>
             Midi Channel
-            <select value={midiChannel} 
+            <select value={midiChannel}
               onChange={(ev) => this.setMidiChannel(ev.target.value)}>
               {channels.map(channel =>
                 <option key={"midiChannel"+channel} value={channel}>{channel}</option>
               )}
             </select>
           </label>
+          <webaudio-knob
+              value="64" max="127" step="1" diameter="32" sprites="0"
+              tooltip="Knob1 tooltip"></webaudio-knob>
+          <webaudio-knob
+              src="images/LittlePhatty.png"
+              value="0" max="100" step="1" diameter="64" sprites="100"
+              tooltip="Knob1 tooltip"></webaudio-knob>
+          <WebAudioKnob
+              src="images/LittlePhatty.png" sprites={100}
+              defvalue={64} max={127} step={1} diameter={64} tooltip="React Knob!" />
         </div>
         <Keyboard ref="keyboard"
           playNote={(...args) => this.playNote(...args)}
           stopNote={(...args) => this.stopNote(...args)} />
-        <Sequencer ref="sequencer" 
-          playing={playing} 
-          tempo={tempo} 
+        <Sequencer ref="sequencer"
+          playing={playing}
+          tempo={tempo}
           playNote={(...args) => this.playNote(...args)}
           stopNote={(...args) => this.stopNote(...args)} />
       </div>

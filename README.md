@@ -19,6 +19,11 @@ webpack-dev-server
 * Connect Volca(s) to MIDI out
 * Visit webpage to start freaking!
 
+## Inspiration
+
+* http://www.html5rocks.com/en/tutorials/audio/scheduling/
+* http://cssdeck.com/labs/pure-css3-piano
+
 ## Copyright
 
 Created by: zwippie

@@ -1,0 +1,56 @@
+.volume {
+  margin: 10px auto;
+  width: 250px;
+  height: 250px;  
+  position: relative;
+  padding: 15px;
+  z-index: 2; 
+}
+
+#volume-knob {
+  width: 250px;
+  height: 250px;  
+  -webkit-border-radius: 125px;
+  display:block;
+  background: #DDD;
+  z-index: 3;
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  -webkit-transform: rotate(30deg);
+}
+
+#progress-bar {
+  clip: rect(0px, 140px, 280px, 0px);
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  -webkit-transform: rotate(30deg); 
+}
+
+#l-bar,
+#r-bar {
+  -webkit-border-radius: 280px;
+  border-radius: 280px;
+  background: #FF9900;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 280px;
+  height: 280px;
+  z-index: 1;
+}
+
+#r-bar {
+  display: none;
+  -webkit-transform: rotate(0deg); /* set initial position of right half of the circle */ 
+  clip: rect(0px, 280px, 280px, 140px);
+}
+
+#l-bar {
+  -webkit-transform: rotate(180deg); /* set initial position of left half of the circle */ 
+  clip: rect(0px, 140px, 280px, 0px); 
+}

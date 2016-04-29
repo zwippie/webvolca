@@ -1,0 +1,44 @@
+.slider {
+
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  background: linear-gradient(to right, red 50%, white 50%);
+  width: 200px;
+  height:20px;
+  border: 1px solid #666;
+  font-size: 120%;
+}
+
+input[type=range]::after {
+  content: attr(data-value);
+  margin-left: -110px;
+  color: black;
+  text-align: center;
+}
+
+input[type=range].small::after {
+  margin-left: -60px;
+  margin-top: -10px;
+}
+
+input[type=range].small {
+  width: 100px;
+  height: 16px;
+  font-size: 100%;
+}
+
+input[type=range]::-webkit-slider-thumb {
+   -webkit-appearance: none;
+  background-color: #666;
+  /*opacity: 0.5;*/
+  width: 10px;
+  height: 20px;
+}
+
+input[type=range].small::-webkit-slider-thumb {
+  width: 4px;
+  height: 16px;
+  font-size: 80%;
+}

@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 
+import Slider from './Slider'
 import VolcaBass from './VolcaBass'
 import PlaybackWorker from 'worker!./PlaybackWorker'
 

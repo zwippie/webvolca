@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import classnames from 'classnames'
 
+import Slider from './Slider'
+
 class Sequencer extends Component {
   constructor(props, context) {
     super(props, context)
@@ -35,17 +37,24 @@ class Sequencer extends Component {
     })
   }
 
+  onSliderChange(val) {
+    console.log('Slider val changed to', val)
+  }
+
   render() {
-    const { gateTime } = this.state
+    const { gateTime, sequence } = this.state
 
     return (
       <div>
-        <h2>Seq {this.state.sequence.join(' - ')}</h2>
+        <h2>Seq {sequence.join(' - ')}</h2>
         <label>
           Gate Time
           <input type="number" step="0.1" min="0.0" max="1.0" 
             value={gateTime}
             onChange={(ev) => this.setGateTime(ev.target.value)}/>
+          <Slider min="0" max={127} step="1" defaultValue="64" onChange={(val) => this.onSliderChange(val)} />
+          <Slider onChange={(val) => this.onSliderChange(val)} size="small" />
+          <Slider min="0" max="1" step="0.1" defaultValue="1" onChange={(val) => this.onSliderChange(val)} />
         </label>
       </div>
 
