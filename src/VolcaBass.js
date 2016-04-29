@@ -115,13 +115,6 @@ class VolcaBass extends Component {
               )}
             </select>
           </label>
-          <webaudio-knob
-              value="64" max="127" step="1" diameter="32" sprites="0"
-              tooltip="Knob1 tooltip"></webaudio-knob>
-          <webaudio-knob
-              src="images/LittlePhatty.png"
-              value="0" max="100" step="1" diameter="64" sprites="100"
-              tooltip="Knob1 tooltip"></webaudio-knob>
           <WebAudioKnob
               src="images/LittlePhatty.png" sprites={100}
               onChange={(val) => this.onKnobChange(val)}

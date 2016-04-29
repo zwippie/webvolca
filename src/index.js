@@ -1,4 +1,3 @@
-// import reactPolymer from 'react-polymer' // Must be imported before React
 import WebMidi from 'webmidi'
 import React from 'react'
 import ReactDOM from 'react-dom'

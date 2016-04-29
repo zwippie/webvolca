@@ -22,9 +22,10 @@ webpack-dev-server
 ## Inspiration
 
 * http://www.html5rocks.com/en/tutorials/audio/scheduling/
+* https://github.com/g200kg/webaudio-controls
 * http://cssdeck.com/labs/pure-css3-piano
 
-## Copyright
+## Legal
 
 Created by: zwippie
 

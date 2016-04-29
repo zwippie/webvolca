@@ -146,12 +146,10 @@ class WebAudioKnob extends Component {
   setValue(value) {
     const { valueold } = this.state
     const { step, min, max, log, onChange } = this.props
-    console.log('setValue', value)
 
     value = parseFloat(value);
     if (!isNaN(value)) {
       value = value < min ? min : value > max ? max : value;
-      console.log('correctedValue', value)
       this.setState({
         value: value,
         valueold: value
@@ -170,7 +168,6 @@ class WebAudioKnob extends Component {
     let knobStyle = {}
     if(this.sprites) {
       let offset = ~~(this.sprites * (value - min) / range) * this.height;
-      console.log('offset', offset)
       knobStyle = {
         backgroundPosition: "0px -" + offset + "px",
         transform: 'rotate(0deg)'
@@ -178,7 +175,6 @@ class WebAudioKnob extends Component {
     }
     else {
       let deg = 270*((value-min)/range-0.5);
-      console.log('rotate to ', deg);
       knobStyle = {
         transform: 'rotate('+deg+'deg)'
       }
@@ -209,7 +205,11 @@ class WebAudioKnob extends Component {
 
 WebAudioKnob.propTypes = {
   min: PropTypes.number,
-  max: PropTypes.number
+  max: PropTypes.number,
+  defvalue: PropTypes.number,
+  step: PropTypes.number,
+  diameter: PropTypes.number,
+  sprites: PropTypes.number
 }
 
 WebAudioKnob.defaultProps = {
@@ -223,7 +223,7 @@ WebAudioKnob.defaultProps = {
   step:       1,
   sprites:    0,
   enable:     true,
-  src:    null,
+  src:        null,
   sensitivity:1,
   valuetip:   1
 }
@@ -242,12 +242,9 @@ WebAudioKnob.pointermove = function(e) {
   }
   var offset = (this.startPosY - e.pageY - this.startPosX + e.pageX) * sensitivity;
 
+  // Not MY magic :p
   const newValue = min + ((((this.startVal + (max - min) * offset / ((e.shiftKey ? 4:1) * 128)) - min) / this.ctlStep)|0) * this.ctlStep
-  console.log(value, newValue, min, max, this.startVal, offset, this.ctlStep)
   this.setValue(newValue)
-  // this.setValue(min + ((((this.startVal + (max - min) * offset / ((e.shiftKey ? 4:1) * 128)) - min) / this.ctlStep)|0) * this.ctlStep)
-    // this.fire('change');
-    // this.props.onChange(value)
   e.preventDefault();
 };
 
