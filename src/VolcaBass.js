@@ -5,6 +5,7 @@ import Keyboard from './Keyboard'
 import Sequencer from './Sequencer'
 import Knob from './Knob'
 import WebAudioKnob from './WebAudioKnob'
+import WebAudioSwitch from './WebAudioSwitch'
 
 class VolcaBass extends Component {
   constructor(props, context) {
@@ -119,6 +120,24 @@ class VolcaBass extends Component {
               src="images/LittlePhatty.png" sprites={100}
               onChange={(val) => this.onKnobChange(val)}
               defvalue={64} max={127} step={1} diameter={64} tooltip="React Knob!" />
+          <WebAudioKnob
+              onChange={(val) => this.onKnobChange(val)}
+              defvalue={64} max={127} step={1} diameter={64} tooltip="React Knob!" />
+          <div style={{}}>
+            <WebAudioKnob
+                onChange={(val) => this.onKnobChange(val)}
+                defvalue={50} max={100} step={1} diameter={32} tooltip="React Knob!" />
+            <WebAudioKnob
+                onChange={(val) => this.onKnobChange(val)}
+                defvalue={5} min={5} max={10} step={1} diameter={32} tooltip="React Knob!" />
+          </div>
+          <WebAudioSwitch
+              src="images/switch_toggle.png" height={56} width={56}
+              onChange={(val) => this.onKnobChange(val)}
+              defvalue={0} tooltip="React Switch!" />
+          <WebAudioSwitch
+              onChange={(val) => this.onKnobChange(val)}
+              defvalue={0} tooltip="React Switch!" />
         </div>
         <Keyboard ref="keyboard"
           playNote={(...args) => this.playNote(...args)}

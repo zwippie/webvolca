@@ -1,7 +1,5 @@
 import React, { Component, PropTypes } from 'react'
 
-
-
 class WebAudioKnob extends Component {
   constructor(props, context) {
     super(props, context)
@@ -35,9 +33,7 @@ class WebAudioKnob extends Component {
     const { value } = this.state
     const { enable, defvalue } = this.props
 
-    console.log('pointerdown')
     if (!enable) return;
-    console.log('pointerdown Go')
     if (e.touches) e = e.touches[0];
     this.boundPointermove = WebAudioKnob.pointermove.bind(this);
     this.boundCancel = WebAudioKnob.cancel.bind(this);
@@ -107,7 +103,7 @@ class WebAudioKnob extends Component {
     if (this.height === null)
       this.height = diameter
 
-    let knb = this.refs['wac-knob'];
+    const knb = this.refs['wac-knob'];
     knb.addEventListener('DOMMouseScroll',this.wheel.bind(this),false);
     knb.addEventListener('mousewheel',this.wheel.bind(this),false);
     knb.addEventListener('mouseover',this.pointerover.bind(this),false);
@@ -156,7 +152,7 @@ class WebAudioKnob extends Component {
       })
     }
     onChange(value) // fire change
-    return value != valueold ? 1 : 0
+    return value != valueold
   }
 
   render() {
@@ -187,7 +183,7 @@ class WebAudioKnob extends Component {
       // between 1k and 10k - show two digits, else show one
       valuedisp = valueNumber.toFixed((valueNumber<10)?2:1) + "k";
     }
-    console.log('render value', value, 'valuedisp', valuedisp, 'valueNumber', valueNumber)
+    // console.log('render value', value, 'valuedisp', valuedisp, 'valueNumber', valueNumber)
 
     return (
       <div className="wac-container" ref="wac-container"
@@ -209,7 +205,8 @@ WebAudioKnob.propTypes = {
   defvalue: PropTypes.number,
   step: PropTypes.number,
   diameter: PropTypes.number,
-  sprites: PropTypes.number
+  sprites: PropTypes.number,
+  onChange: PropTypes.func
 }
 
 WebAudioKnob.defaultProps = {
@@ -225,7 +222,8 @@ WebAudioKnob.defaultProps = {
   enable:     true,
   src:        null,
   sensitivity:1,
-  valuetip:   1
+  valuetip:   1,
+  onChange:   function(){}
 }
 
 WebAudioKnob.pointermove = function(e) {
