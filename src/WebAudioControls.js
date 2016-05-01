@@ -43,7 +43,8 @@ class WebAudioControls extends Component {
         <WebAudioKnob
             src="images/LittlePhatty.png" sprites={100}
             onChange={(val) => this.onKnob1Change(val)}
-            defvalue={this.state.knob1Value}
+            initialValue={this.state.knob1Value}
+            defaultValue={80}
             max={127} step={1} diameter={64}
             tooltip="React Knob!" />
         <WebAudioParam
@@ -51,14 +52,16 @@ class WebAudioControls extends Component {
             onChange={(val) => this.onKnob1Change(val)} />
         <WebAudioKnob
             onChange={(val) => this.onKnobChange(val)}
-            defvalue={64} max={127} step={1} diameter={64} tooltip="React Knob!" />
+            initialValue={10}
+            defaultValue={64}
+            max={127} step={1} diameter={64} tooltip="React Knob!" />
         <div style={{}}>
           <WebAudioKnob
               onChange={(val) => this.onKnobChange(val)}
-              defvalue={50} max={100} step={1} diameter={32} tooltip="React Knob!" />
+              initialValue={50} max={100} step={1} diameter={32} tooltip="React Knob!" />
           <WebAudioKnob
               onChange={(val) => this.onKnobChange(val)}
-              defvalue={5} min={5} max={10} step={1} diameter={32} tooltip="React Knob!" />
+              initialValue={5} min={5} max={10} step={1} diameter={32} tooltip="React Knob!" />
         </div>
         <WebAudioSwitch
             src="images/switch_toggle.png" height={56} width={56}

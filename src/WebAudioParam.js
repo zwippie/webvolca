@@ -47,7 +47,7 @@ class WebAudioParam extends Component {
     }
 
     return(
-      <input type="text" class="wac-param"
+      <input type="text" className="wac-param"
           style={paramStyle}
           value={value}
           onChange={(ev) => this.setValue(ev.target.value)} />
