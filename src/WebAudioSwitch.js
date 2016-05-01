@@ -40,7 +40,7 @@ class WebAudioSwitch extends Component {
     }
     this.press = 1;
     this.ttflag = 0;
-    // this.showtip();
+    this.showtip();
     e.preventDefault();
   }
 
@@ -49,7 +49,7 @@ class WebAudioSwitch extends Component {
     if (btn == 0) {
       this.ttflag = 1
     }
-    // setTimeout(this.showtip.bind(this),700);
+    setTimeout(this.showtip.bind(this),700);
     this.hover = 1
     if (this.type=="kick" && this.press) {
       this.setValue(1)
@@ -61,10 +61,24 @@ class WebAudioSwitch extends Component {
     if (this.press == 0) {
       this.vtflag = 0
     }
-    // this.showtip();
+    this.showtip();
     this.hover = 0;
     if (this.type == "kick") {
       this.setValue(0)
+    }
+  }
+
+  showtip() {
+    const { tooltip } = this.props
+
+    const ts = this.refs['wac-tooltip-box'].style;
+    if (tooltip && this.ttflag) {
+      ts.display = "block";
+      setTimeout(function(){this.opacity=0.8;}.bind(ts),100);
+    }
+    else if (ts.opacity) {
+      ts.opacity = 0;
+      setTimeout(function(){this.display="none";}.bind(ts),500);
     }
   }
 
@@ -120,9 +134,8 @@ class WebAudioSwitch extends Component {
 
   render() {
     const { value } = this.state
-    const { height } = this.props
+    const { height, tooltip } = this.props
 
-    let tooltip = value;
     let switchStyle = {
       backgroundPosition: '0px -' + (value * height) + 'px'
     }
@@ -133,7 +146,9 @@ class WebAudioSwitch extends Component {
         onTouchStart={(ev) => this.pointerdown(ev)}>
         <div className="wac-body">
           <div className="wac-switch" ref="wac-switch" style={switchStyle}></div>
-          <div className="wac-tooltip-box"><span className="wac-tooltip-text">{tooltip}</span></div>
+          <div className="wac-tooltip-box" ref="wac-tooltip-box">
+            <span className="wac-tooltip-text">{tooltip}</span>
+          </div>
         </div>
       </div>
     )

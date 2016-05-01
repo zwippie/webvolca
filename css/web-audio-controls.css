@@ -21,6 +21,15 @@
   height: 64px;
   background-position: -64px;
 }
+.wac-slibase {
+  cursor: pointer;
+  background: #000000;
+  position: relative;
+}
+.wac-sliknob {
+  background: #ff0000;
+  position: relative;
+}
 .wac-value-tip {
   position: absolute;
   top: -20px;

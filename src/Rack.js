@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react'
 
+import PlaybackWorker from 'worker!./PlaybackWorker'
 import Slider from './Slider'
 import VolcaBass from './VolcaBass'
-import PlaybackWorker from 'worker!./PlaybackWorker'
+import WebAudioControls from './WebAudioControls'
 
 class Rack extends Component {
   constructor(props, context) {
@@ -20,7 +21,7 @@ class Rack extends Component {
     this.current16thNote = 0.0
     this.nextNoteTime = 0.0
 
-    // The worker that will provide steady ticks when to schedule events 
+    // The worker that will provide steady ticks when to schedule events
     this.createPlaypackWorker()
   }
 
@@ -51,7 +52,7 @@ class Rack extends Component {
   // Start playback for the whole rack, use webworker to trigger scheduler pulses
   play() {
     const { webMidi } = this.props
-    
+
     this.current16thNote = 0
     this.nextNoteTime = webMidi.time
     this.playbackWorker.postMessage("start");
@@ -73,7 +74,7 @@ class Rack extends Component {
     const { webMidi } = this.props
     // console.log('scheduler called', webMidi.time, this.nextNoteTime, this.current16thNote)
 
-    // while there are notes that will need to play before the next interval, 
+    // while there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
     while (this.nextNoteTime < webMidi.time + scheduleAheadTime ) {
       // console.log('scheduler while', webMidi.time, this.nextNoteTime, this.current16thNote)
@@ -85,7 +86,7 @@ class Rack extends Component {
   scheduleEvents(beatNumber, time) {
     const { devices, tempo } = this.state
     const bass = this.refs['bass']
-    
+
     let secondsPerBeat = 60.0 / tempo;  // picks up the CURRENT tempo value!
     let duration = secondsPerBeat * 1000 / 4; // Add 1/4 of quarter-note beat length to time
 
@@ -98,7 +99,7 @@ class Rack extends Component {
 
     // Advance current note and time by a 16th note...
     let secondsPerBeat = 60.0 / tempo;  // picks up the CURRENT tempo value!
-    
+
     this.nextNoteTime += (secondsPerBeat * 1000 / 4),  // Add 1/4 of quarter-note beat length to time,
     this.current16thNote = (this.current16thNote + 1) % 16  // Advance the beat number, wrap to zero
   }
@@ -120,13 +121,14 @@ class Rack extends Component {
           <button disabled={playing}
             onClick={() => this.play()}>
             Play</button>
-          <button disabled={!playing} 
+          <button disabled={!playing}
             onClick={() => this.stop()}>
             Stop</button>
         </div>
         {devices.map(device =>
           <VolcaBass ref="bass" key="bass" webMidi={webMidi} playing={playing} tempo={tempo} />
         )}
+        <WebAudioControls />
       </div>
     )
   }
