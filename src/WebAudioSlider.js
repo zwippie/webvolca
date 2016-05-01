@@ -5,7 +5,7 @@ class WebAudioSlider extends Component {
     super(props, context)
     this.state = {
       value: props.initialValue,
-      valueOld: 0
+      valueOld: props.initialValue
     }
 
     // Used for event handling
@@ -26,6 +26,15 @@ class WebAudioSlider extends Component {
     slib.addEventListener('mousewheel', this.wheel.bind(this), false)
     slib.addEventListener('mouseover', this.pointerOver.bind(this), false)
     slib.addEventListener('mouseout', this.pointerOut.bind(this), false)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.value != nextProps.initialValue) {
+      // this.setState({
+      //   value: nextProps.initialValue
+      // })
+      this.setValue(nextProps.initialValue)
+    }
   }
 
   pointerDown(e) {
@@ -91,10 +100,10 @@ class WebAudioSlider extends Component {
   setValue(value) {
     const { valueOld } = this.state
     const { min, max, onChange } = this.props
-
     value = parseFloat(value);
     if (!isNaN(value)) {
       value = value < min ? min : value > max ? max : value
+console.log('slider changeValue', valueOld, 'to', value)
       this.setState({
         value: value,
         valueOld: value
@@ -144,14 +153,14 @@ class WebAudioSlider extends Component {
     const baseStyle = {
       width: dimensions.width + 'px',
       height: dimensions.height + 'px',
-      background: this.props.src ? this.props.src : '#000',
+      background: this.props.src ? 'url(' + this.props.src + ')' : '#000',
       borderRadius: this.props.src ? '' : '8px',
       backgroundSize: '100% 100%',
     }
     let knobStyle = {
       width: dimensions.knobWidth + 'px',
       height: dimensions.knobWidth + 'px',
-      background: 'url('+ this.props.knobSource + ')',
+      background: 'url('+ this.props.knobSrc + ')',
       left: dimensions.width / 2 - dimensions.knobWidth / 2 + 'px',
       top: dimensions.height / 2 - dimensions.knobHeight / 2 + 'px',
       backgroundSize: '100% 100%'
@@ -200,7 +209,7 @@ WebAudioSlider.defaultProps = {
   initialValue: 0,
   defaultValue: 0,
   src: null,
-  knobSource: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEDElEQVR42u1XS0hVURQ9+YsUQxNrJloTwYEjcSbiSISIhGjWsLlIOBNHDgUDhw6CCJOwSEokwoQokTApTE1CNHnlJ7+Z/7da675z9fC67z4/NQh8sPB371lrr73P3ltjTj//0wfGnPtlTO2aMXdXjelfNubzD2KO33/j72b5Nz3zt0lTNo25smVMI7FCYIP4SVAEKAKLBEUgQkzxmUk+O8139O5JybN3jbm5Y8x7AnvE7pkz2CY2iXVi1QpYIL4TXwkKwATf+cR353nGccnzSdhKLIg4mpqK6NmzQHY2oufPYy8rC7v8eZ2/X6IQX0DkQABG+e4Iz2B68o8cuSXfiPJwjzgvDygsBIqLY7h8GcjPxx4FraWn4wefcwV8iQnAMM8gWg/thPIm2xW5yMFIUVAAlJcDV68CN24A164BlZVASQmiFy9iOzMTS3TCTYEv4APxjme95ZmHqgkVnHLu2a7IRV5VBdy+DTQ1Ac3NQEMDcOsWUFHhObGTm4sluhBXA64AvOGZH3l2UgGq9h2bc892RS7y1lagszOGtjagrg6orvbSscPnljMyMEvH4gUMHwjAK56d9J7rqu1Hr5zLdkUu4r4+oLcXaG8H7twBamo8AdsXLmCRAmYoYMraP06MOAJeEy95dmifUJPZsldN1e4Vm3Iu2yVA5F1dQEtLzBXWQbSoCJu8FXNpaYH2DxGDVsCL2NfahALU4dRkdM911TwBKjjlXLYrcpHX1wPXrwOlpdi7dAkrLMLvKSn70U/ERT9A9FsBT8mRUIDaqzqcmozuuXfVVO0qOOVctitykZeVeQW6QadmWYDTfCcoej//fQcC+hMKUG9XZ1OHU5PRPddV86pdBaecSxAjF/lmTg7m+dyMJQ/K/cBB/tFDPCZHQgEaLMu2x6vDqcnonntO2AaknMt2RS7yCK2fdKwPit63/xnxKEyAptqi7e1qr+pwajK657pqqnYVnHIu293IXfKg6HuJJ0RnWAo0UufsYBHUXtXh1GR0z3XVVO0quOkActf6wbjcK/ou4kFYEWqeR+xQiYeazIxtNFNOuw0j961X7rtj0ev72tBGpHn+1Q6ViG2tPuKJxwNsd8l967tjuVf0K0kXFi0Tk5YoHj6xG3UYuWt9RwyNSWeBNhktExOW0CUdDyAeSkJuCw/3eebzwwwjjUxtMlomRi3haAixX+1h5LR+4R7PbDrsiqblQZuMlokPDmki4tdOtff+Sb7xkGeNHXU10xqlTUbLxDuHdDCO2I3ar/YuJ3KRDx11JXOd0CajZcIn9En7HGI/ar/aO2zOZfvYcZdStya0yWiZ0Dx/YUn9iH27nahXVO0quKaTruVBfULzXCNVU02DRb1d7VUdrudf/GNy+vnXn98GjC4Yymnd5wAAAABJRU5ErkJggg==',
+  knobSrc: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEDElEQVR42u1XS0hVURQ9+YsUQxNrJloTwYEjcSbiSISIhGjWsLlIOBNHDgUDhw6CCJOwSEokwoQokTApTE1CNHnlJ7+Z/7da675z9fC67z4/NQh8sPB371lrr73P3ltjTj//0wfGnPtlTO2aMXdXjelfNubzD2KO33/j72b5Nz3zt0lTNo25smVMI7FCYIP4SVAEKAKLBEUgQkzxmUk+O8139O5JybN3jbm5Y8x7AnvE7pkz2CY2iXVi1QpYIL4TXwkKwATf+cR353nGccnzSdhKLIg4mpqK6NmzQHY2oufPYy8rC7v8eZ2/X6IQX0DkQABG+e4Iz2B68o8cuSXfiPJwjzgvDygsBIqLY7h8GcjPxx4FraWn4wefcwV8iQnAMM8gWg/thPIm2xW5yMFIUVAAlJcDV68CN24A164BlZVASQmiFy9iOzMTS3TCTYEv4APxjme95ZmHqgkVnHLu2a7IRV5VBdy+DTQ1Ac3NQEMDcOsWUFHhObGTm4sluhBXA64AvOGZH3l2UgGq9h2bc892RS7y1lagszOGtjagrg6orvbSscPnljMyMEvH4gUMHwjAK56d9J7rqu1Hr5zLdkUu4r4+oLcXaG8H7twBamo8AdsXLmCRAmYoYMraP06MOAJeEy95dmifUJPZsldN1e4Vm3Iu2yVA5F1dQEtLzBXWQbSoCJu8FXNpaYH2DxGDVsCL2NfahALU4dRkdM911TwBKjjlXLYrcpHX1wPXrwOlpdi7dAkrLMLvKSn70U/ERT9A9FsBT8mRUIDaqzqcmozuuXfVVO0qOOVctitykZeVeQW6QadmWYDTfCcoej//fQcC+hMKUG9XZ1OHU5PRPddV86pdBaecSxAjF/lmTg7m+dyMJQ/K/cBB/tFDPCZHQgEaLMu2x6vDqcnonntO2AaknMt2RS7yCK2fdKwPit63/xnxKEyAptqi7e1qr+pwajK657pqqnYVnHIu293IXfKg6HuJJ0RnWAo0UufsYBHUXtXh1GR0z3XVVO0quOkActf6wbjcK/ou4kFYEWqeR+xQiYeazIxtNFNOuw0j961X7rtj0ev72tBGpHn+1Q6ViG2tPuKJxwNsd8l967tjuVf0K0kXFi0Tk5YoHj6xG3UYuWt9RwyNSWeBNhktExOW0CUdDyAeSkJuCw/3eebzwwwjjUxtMlomRi3haAixX+1h5LR+4R7PbDrsiqblQZuMlokPDmki4tdOtff+Sb7xkGeNHXU10xqlTUbLxDuHdDCO2I3ar/YuJ3KRDx11JXOd0CajZcIn9En7HGI/ar/aO2zOZfvYcZdStya0yWiZ0Dx/YUn9iH27nahXVO0quKaTruVBfULzXCNVU02DRb1d7VUdrudf/GNy+vnXn98GjC4Yymnd5wAAAABJRU5ErkJggg==',
   tooltip: '',
   min: 0,
   max: 100,

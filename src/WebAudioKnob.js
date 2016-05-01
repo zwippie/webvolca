@@ -5,7 +5,7 @@ class WebAudioKnob extends Component {
     super(props, context)
     this.state = {
       value: parseFloat(props.defvalue),
-      valueold: NaN
+      valueold: parseFloat(props.defvalue)
     }
 
     this.defvalue = null
@@ -178,12 +178,12 @@ class WebAudioKnob extends Component {
 
     let valueNumber = (log) ? Math.pow(2, value) : value;
     let valuedisp = valueNumber.toFixed(this.digits);
-    if ((this.digits==0)&&(valueNumber>1000)) {
+    if ((this.digits==0) && (valueNumber>1000)) {
       valueNumber = valueNumber/1000;
       // between 1k and 10k - show two digits, else show one
       valuedisp = valueNumber.toFixed((valueNumber<10)?2:1) + "k";
     }
-    // console.log('render value', value, 'valuedisp', valuedisp, 'valueNumber', valueNumber)
+    console.log('render value', value, 'valuedisp', valuedisp, 'valueNumber', valueNumber)
 
     return (
       <div className="wac-container" ref="wac-container"

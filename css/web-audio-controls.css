@@ -30,6 +30,12 @@
   background: #ff0000;
   position: relative;
 }
+.wac-param {
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+}
 .wac-value-tip {
   position: absolute;
   top: -20px;

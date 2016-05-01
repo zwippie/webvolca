@@ -4,8 +4,8 @@ class WebAudioSwitch extends Component {
   constructor(props, context) {
     super(props, context)
     this.state = {
-      value: props.defvalue,
-      valueold: 0
+      value: props.initialValue,
+      valueOld: props.initialValue
     }
     this.press = 0
     this.hover = 0
@@ -14,7 +14,7 @@ class WebAudioSwitch extends Component {
 
   pointerdown(e) {
     const { value } = this.state
-    const { enable, type, defvalue } = this.props
+    const { enable, type, defaultValue } = this.props
 
     if (!enable) return;
     this.boundCancel = WebAudioSwitch.cancel.bind(this);
@@ -29,7 +29,7 @@ class WebAudioSwitch extends Component {
       break;
     case 'toggle':
       if (e.ctrlKey || e.metaKey) {
-        this.setValue(defvalue)
+        this.setValue(defaultValue)
       } else {
         this.setValue(1 - value)
       }
@@ -89,13 +89,12 @@ class WebAudioSwitch extends Component {
   }
 
   setValue(value, fire) {
-    const { valueold } = this.state
+    const { valueOld } = this.state
     const { type, onChange, onClick } = this.props
 
     value = parseInt(value)
 
-
-
+    // TODO: fix groupint?
     // var el = document.getElementsByTagName('webaudio-switch');
     // if(value == 1) {
     //   for(var i = 0, j = el.length; i < j; ++i) {
@@ -106,14 +105,13 @@ class WebAudioSwitch extends Component {
 
     this.setState({
       value: value,
-      valueold: value
+      valueOld: value
     })
-    onChange(value)
+    // if (value != valueOld) // bug when linked to second switch that has value: 1-value
+      onChange(value)
     if (type == 'kick' && value == 0) {
       onClick(value)
     }
-
-    return value != valueold
   }
 
   componentDidMount() {
@@ -124,20 +122,30 @@ class WebAudioSwitch extends Component {
     sw.addEventListener('mouseover',this.pointerover.bind(this),false);
     sw.addEventListener('mouseout',this.pointerout.bind(this),false);
     sw.addEventListener('click',this.click.bind(this),false);
-
-    sw.style.width = width+'px';
-    sw.style.height = height+'px';
-    sw.style.background = 'url('+src+')';
-    sw.style.backgroundPosition = '0px -' + (value * height) + 'px';
-    sw.style.backgroundSize = '100% 200%';
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.value != nextProps.initialValue) {
+      this.setState({
+        value: nextProps.initialValue
+      })
+    }
+  }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return this.state.value !== nextState.value
+  // }
 
   render() {
     const { value } = this.state
-    const { height, tooltip } = this.props
+    const { width, height, src, tooltip } = this.props
 
-    let switchStyle = {
-      backgroundPosition: '0px -' + (value * height) + 'px'
+    const switchStyle = {
+      width: width + 'px',
+      height: height + 'px',
+      background: 'url('+src+')',
+      backgroundPosition: '0px -' + (value * height) + 'px',
+      backgroundSize: '100% 200%'
     }
 
     return (
@@ -158,11 +166,13 @@ class WebAudioSwitch extends Component {
 export default WebAudioSwitch
 
 WebAudioSwitch.propTypes = {
-  defvalue: PropTypes.number
+  initialValue: PropTypes.number,
+  defaultValue: PropTypes.number
 }
 
 WebAudioSwitch.defaultProps = {
-  defvalue:   0,
+  initialValue:   0,
+  defaultValue:   0,
   type:       'toggle',
   width:      24,
   height:     24,

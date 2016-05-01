@@ -2,15 +2,26 @@ import React, { Component, PropTypes } from 'react'
 
 import Knob from './Knob'
 import WebAudioKnob from './WebAudioKnob'
-import WebAudioSwitch from './WebAudioSwitch'
 import WebAudioSlider from './WebAudioSlider'
+import WebAudioSwitch from './WebAudioSwitch'
+import WebAudioParam from './WebAudioParam'
 
 class WebAudioControls extends Component {
   constructor(props, context) {
     super(props, context)
     this.state = {
-      sliderDirection: 0
+      knob1Value: 40,
+      sliderDirection: 0,
+      sliderValue: 25
     }
+  }
+
+  onKnob1Change(val) {
+    val = parseInt(val.toFixed(0))
+    console.log('onKnob1Change', val)
+    this.setState({
+      knob1Value: val
+    })
   }
 
   onKnobChange(val) {
@@ -18,13 +29,26 @@ class WebAudioControls extends Component {
     console.log('onKnobChange', val)
   }
 
+  onSliderDirectionChange(val) {
+    // testing explicit callback handler vs inline setstate in render: both work
+    console.log('onSliderDirectionChange', val)
+    this.setState({
+      sliderDirection: val
+    })
+  }
+
   render() {
     return (
       <div>
         <WebAudioKnob
             src="images/LittlePhatty.png" sprites={100}
-            onChange={(val) => this.onKnobChange(val)}
-            defvalue={64} max={127} step={1} diameter={64} tooltip="React Knob!" />
+            onChange={(val) => this.onKnob1Change(val)}
+            defvalue={this.state.knob1Value}
+            max={127} step={1} diameter={64}
+            tooltip="React Knob!" />
+        <WebAudioParam
+            initialValue={this.state.knob1Value}
+            onChange={(val) => this.onKnob1Change(val)} />
         <WebAudioKnob
             onChange={(val) => this.onKnobChange(val)}
             defvalue={64} max={127} step={1} diameter={64} tooltip="React Knob!" />
@@ -38,18 +62,31 @@ class WebAudioControls extends Component {
         </div>
         <WebAudioSwitch
             src="images/switch_toggle.png" height={56} width={56}
-            onChange={(val) => this.setState({sliderDirection: val})}
-            defvalue={this.state.sliderDirection} tooltip="React Switch!" />
+            onChange={(val) => this.onSliderDirectionChange(val)}
+            initialValue={this.state.sliderDirection}
+            tooltip="React Switch!" />
         <WebAudioSwitch
-            onChange={(val) => this.onKnobChange(val)}
-            defvalue={this.state.sliderDirection} tooltip="React Switch!" />
+            onChange={(val) => this.setState({sliderDirection: 1 - val})}
+            initialValue={1 - this.state.sliderDirection}
+            tooltip="React Switch 2!" />
         <WebAudioSlider
-            onChange={(val) => this.onKnobChange(val)}
-            defaultValue={50} tooltip="React Slider!" />
+            direction="horizontal"
+            src="images/hsliderbody.png"
+            knobSrc="images/hsliderknob.png"
+            onChange={(val) => this.setState({sliderValue: val})}
+            initialValue={this.state.sliderValue}
+            defaultValue={50}
+            tooltip="React Slider!"
+            width={256} />
+        <WebAudioParam
+            initialValue={this.state.sliderValue}
+            onChange={(val) => this.setState({sliderValue: val})} />
         <WebAudioSlider
             direction={this.state.sliderDirection ? 'horizontal' : 'vertical'}
-            onChange={(val) => this.onKnobChange(val)}
-            defaultValue={50} tooltip="React Slider!" />
+            onChange={(val) => this.setState({sliderValue: val})}
+            initialValue={this.state.sliderValue}
+            defaultValue={100}
+            tooltip="React Slider 2!" />
       </div>
     )
   }
